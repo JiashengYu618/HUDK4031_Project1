@@ -1,0 +1,80 @@
+---
+title: "Project1"
+author: "team E"
+date: "9/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**This is the data**
+```{r data.csv}
+data <- read.csv("data.csv", header = T)
+data
+
+```
+**Form different data groups**
+```{r}
+id = data[1]
+openness_group = data[2]
+agreeableness_group = data[3]
+neuroticism_group = data[4]
+conscientiousness_group = data[5]
+extroversion_group = data[6]
+scores = data[7]
+
+```
+**Collect the maximum data of each group**
+```{r}
+max_sub = max(openness_group)#5
+
+max_id_scores = max(scores)#22
+
+```
+**Plot the graph**
+```{r}
+g1<-data.frame(id,openness_group)
+plot(g1,type="o",xlab="candidateID",ylab="",ylim = c(0,max_sub),col="red",main="Different candidates with their different scores",pch=c(15))
+g2<-data.frame(id,agreeableness_group)
+lines(g2,type="o",col="blue",pch=c(16))
+g3<-data.frame(id,neuroticism_group)
+lines(g3,type="o",col="purple",pch=c(17))
+g4<-data.frame(id,conscientiousness_group)
+lines(g4,type="o",col="yellow",pch=c(18))
+g5<-data.frame(id,extroversion_group)
+lines(g5,type="o",col="black",pch=c(19))
+
+legend(-2,-0.12,c("openness","agreeableness","neuroticism","conscientiousness","extroversion"),col=c("red","blue","purple","yellow","black"),pch=15:19,xpd=T)
+```
+```{r}
+g6<-data.frame(id,scores)
+plot(g6,type="p",xlab="candidateID",ylab="Scores",ylim = c(0,max_id_scores),col="green",main="Different candidates with their total score",pch=c(15))
+```
+
+
+
+**To make the statistics more readable**
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(grid)
+library(reshape2)
+
+my_data = melt(data,id.vars = "ID",variable.name = "five_dims",value.name = "score")
+ggplot(my_data,aes(ID,score,fill=five_dims))+
+geom_bar(stat="identity",position="dodge")
+```
+
+**Regression**
+```{r}
+model<-lm(data$Scores~.,data = data)
+summary(model)
+
+```
+
+*From the above result, we can know that, all five coefficients have P value < 0.05 which means the coefficients are not zero significantly*
+
+**For future work, we need to optimize the model**
